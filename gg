@@ -1,0 +1,100 @@
+-- [[ WORM-SEGAGA 22.0 : REAL-TIME MULTI-WHITELIST ]] --
+-- [[ CREDIT: แกล้งคน By Hon 😈 ]] --
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+   Name = "แกล้งคน By Hon | WORM 22.0 ⚡", -- เพิ่มชื่อคุณในหัวข้อหลัก
+   LoadingTitle = "Syncing Player Database...",
+   LoadingSubtitle = "Created by Hon & OlympusX", -- ใส่เครดิตตอนโหลด
+})
+
+local MainTab = Window:CreateTab("Main Control ⚙️", 4483362458)
+local WhitelistTab = Window:CreateTab("Whitelist 🛡️", 4483362458)
+
+-- [[ Variables ]] --
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local whitelist = {}
+local active = false
+local toggles = {}
+
+-- [[ Remotes ]] --
+local re1 = ReplicatedStorage:WaitForChild("RE"):WaitForChild("1Playe1rTrigge1rEven1t")
+local re2 = ReplicatedStorage:WaitForChild("RE"):WaitForChild("1Clea1rTool1s")
+
+-- [[ Logic Core : กวาดล้างระดับพระเจ้า ]] --
+local function ExecuteWipe()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= player and not whitelist[p.Name] and p.Character then
+            local tool = p.Character:FindFirstChildOfClass("Tool")
+            if tool then
+                pcall(function()
+                    re1:FireServer("AcceptedToolToServer", tool.Name, p)
+                    re2:FireServer("ClearAllTools")
+                end)
+            end
+        end
+    end
+end
+
+-- [[ UI : Main Control ]] --
+MainTab:CreateSection("Wiper Toggle | แกล้งคน By Hon") -- ใส่เครดิตที่หัวข้อ Section
+
+MainTab:CreateToggle({
+   Name = "🔥 เปิดใช้งานการกวาดล้าง (GOD SPEED)",
+   CurrentValue = false,
+   Flag = "WipeToggle",
+   Callback = function(Value)
+      active = Value
+      if active then
+          -- เพิ่มชื่อเครดิตในแจ้งเตือน
+          Rayfield:Notify({
+              Title = "SYSTEM BY HON ACTIVE", 
+              Content = "ยกเลิกการถือของไอ้พวกนั้นแล้วค้าบฮอล! 😈", 
+              Duration = 3
+          })
+      end
+   end,
+})
+
+-- [[ UI : Real-time Whitelist Logic ]] --
+WhitelistTab:CreateSection("ติ๊กถูกหน้าชื่อคนที่จะ 'ไม่' ลบของ")
+
+local function AddPlayerToWhitelistUI(p)
+    if p == player then return end
+    toggles[p.Name] = WhitelistTab:CreateToggle({
+        Name = "🛡️ " .. p.Name,
+        CurrentValue = false,
+        Callback = function(Value)
+            whitelist[p.Name] = Value
+        end,
+    })
+end
+
+for _, p in pairs(Players:GetPlayers()) do
+    AddPlayerToWhitelistUI(p)
+end
+
+Players.PlayerAdded:Connect(function(p)
+    AddPlayerToWhitelistUI(p)
+end)
+
+Players.PlayerRemoving:Connect(function(p)
+    whitelist[p.Name] = nil
+    toggles[p.Name] = nil 
+end)
+
+-- [[ The Infinite God-Speed Loop ]] --
+RunService.Heartbeat:Connect(function()
+    if active then
+        ExecuteWipe()
+    end
+end)
+
+-- เครดิตใน Console
+print("--------------------------------------")
+print("WORM-SEGAGA 22.0 : LOADED SUCCESS")
+print("AUTHOR: แกล้งคน By Hon 😈⚡")
+print("--------------------------------------")
